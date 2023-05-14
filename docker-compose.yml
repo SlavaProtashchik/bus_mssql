@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sql1
+    hostname: sql1
+    ports:
+      - "1433:1433"
+    env_file:
+      - .env
+    volumes:
+      - ./mssql:/var/opt/mssql
+
+  appsmith:
+    image: index.docker.io/appsmith/appsmith-ce
+    container_name: appsmith
+    ports:
+      - "8081:80"
+      - "4430:443"
+    volumes:
+      - ./stacks:/appsmith-stacks
+    restart: unless-stopped
