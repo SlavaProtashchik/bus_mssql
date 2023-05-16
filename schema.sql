@@ -10,16 +10,27 @@ GO
 USE СистемаУчетаБилетов;
 GO
 
+
+-- Создание таблицы "Организации"
+CREATE TABLE Организации
+(
+    ИдентификаторОрганизации INT IDENTITY (1,1) PRIMARY KEY,
+    Название               NVARCHAR(50) NOT NULL,
+    CONSTRAINT UK_Назание_Организации UNIQUE (Название),
+)
+
 -- Создание таблицы "Пассажиры"
 CREATE TABLE Пассажиры
 (
-    ИдентификаторПассажира INT IDENTITY (1,1) PRIMARY KEY,
-    Имя                    NVARCHAR(50) NOT NULL,
-    Фамилия                NVARCHAR(50) NOT NULL,
-    НомерПаспорта          NVARCHAR(20) NOT NULL,
-    Email                  NVARCHAR(100),
-    Телефон                NVARCHAR(20),
-    CONSTRAINT UK_Пассажиры_НомерПаспорта UNIQUE (НомерПаспорта)
+    ИдентификаторПассажира   INT IDENTITY (1,1) PRIMARY KEY,
+    Имя                      NVARCHAR(50) NOT NULL,
+    Фамилия                  NVARCHAR(50) NOT NULL,
+    НомерПаспорта            NVARCHAR(20) NOT NULL,
+    Email                    NVARCHAR(100),
+    Телефон                  NVARCHAR(20),
+    ИдентификаторОрганизации INT          NOT NULL,
+    CONSTRAINT UK_Пассажиры_НомерПаспорта UNIQUE (НомерПаспорта),
+    FOREIGN KEY (ИдентификаторОрганизации) REFERENCES Организации (ИдентификаторОрганизации)
 );
 GO
 
@@ -92,26 +103,16 @@ GO
 -- Создание таблицы "Билеты
 CREATE TABLE Билеты
 (
-    ИдентификаторБилета    INT IDENTITY (1,1) PRIMARY KEY,
-    ИдентификаторПассажира INT,
-    ИдентификаторРейса     INT,
-    Цена                   MONEY NOT NULL,
-    НомерМеста             INT   NOT NULL,
-    ДатаБронирования       DATETIME,
-    ДатаПокупки            DATETIME,
+    ИдентификаторБилета        INT IDENTITY (1,1) PRIMARY KEY,
+    ИдентификаторПассажира     INT,
+    ИдентификаторРейса         INT,
+    Цена                       MONEY NOT NULL,
+    НомерМеста                 INT   NOT NULL,
+    ДатаБронирования           DATETIME,
+    ДатаПокупки                DATETIME,
+    ИдентификаторОбратныйБилет INT,
     FOREIGN KEY (ИдентификаторПассажира) REFERENCES Пассажиры (ИдентификаторПассажира),
-    FOREIGN KEY (ИдентификаторРейса) REFERENCES Рейсы (ИдентификаторРейса)
+    FOREIGN KEY (ИдентификаторРейса) REFERENCES Рейсы (ИдентификаторРейса),
+    FOREIGN KEY (ИдентификаторОбратныйБилет) REFERENCES Билеты (ИдентификаторБилета)
 );
 GO
-
--- Создание таблицы "Поездки"
-CREATE TABLE Поездки
-(
-    ИдентификаторПоездки       INT IDENTITY (1,1) PRIMARY KEY,
-    ИдентификаторБилетаТуда    INT,
-    ИдентификаторБилетаОбратно INT,
-    FOREIGN KEY (ИдентификаторБилетаТуда) REFERENCES Билеты (ИдентификаторБилета),
-    FOREIGN KEY (ИдентификаторБилетаОбратно) REFERENCES Билеты (ИдентификаторБилета)
-);
-GO
-
